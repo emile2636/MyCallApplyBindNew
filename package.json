@@ -1,0 +1,14 @@
+{
+  "name": "mycallapplybindnew",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "dependencies": {
+    "jest": "27.4.3"
+  },
+  "devDependencies": {
+    "@babel/core": "7.2.0",
+    "parcel-bundler": "^1.6.1"
+  },
+  "keywords": []
+}
