@@ -7,33 +7,63 @@ import {
 	myNew
 } from './index'
 
-setUpMyBind()
-setUpMyCall()
-setUpMyApply()
+beforeAll(() => {
+	setUpMyBind()
+	setUpMyCall()
+	setUpMyApply()
+})
 
-function wait(ms) {
-	return new Promise((resolve) => {
-		setTimeout(resolve, ms)
-	})
+function Pokemon(name) {
+	this.name = name
 }
 
-test('hello world', () => {
-	expect(hello()).toBe('world')
+Pokemon.prototype.getName = function () {
+	return this.name
+}
+
+function pokeInfo(color, type) {
+	if (!this.getName) return 'bind by new'
+	const str = `${this.getName()} is ${color} and type is ${type}`
+	console.log(str)
+	return str
+}
+
+test('myNew', () => {
+	const Pika = myNew(Pokemon, 'pika')
+	expect(Pika).toBeInstanceOf(Pokemon)
 })
 
-test('async support', async () => {
-	await wait(10)
-
-	expect(true).toBe(true)
+test('myCall', () => {
+	const name = 'pika'
+	const Pika = myNew(Pokemon, name)
+	const color = 'yellow',
+		type = 'ELECTRIC'
+	expect(pokeInfo.myCall(Pika, color, type)).toMatch(
+		`${name} is ${color} and type is ${type}`
+	)
 })
 
-test('ES6 support', () => {
-	expect(fancyEs6Stuff(['a', 'b', 'c'], [1, 2, 3])).toEqual([
-		'a',
-		'b',
-		'c',
-		1,
-		2,
-		3
-	])
+test('myApply', () => {
+	const name = 'pika'
+	const Pika = myNew(Pokemon, name)
+	const color = 'yellow',
+		type = 'ELECTRIC'
+	expect(pokeInfo.myApply(Pika, [color, type])).toMatch(
+		`${name} is ${color} and type is ${type}`
+	)
+})
+
+test('myBind', () => {
+	const name = 'pika'
+	const Pika = myNew(Pokemon, name)
+	const color = 'yellow',
+		type = 'ELECTRIC'
+	const bindPokeInfo = pokeInfo.myBind(Pika)
+	expect(bindPokeInfo()).toMatch(`${name} is undefined and type is undefined`)
+	expect(bindPokeInfo(color, type)).toMatch(
+		`${name} is ${color} and type is ${type}`
+	)
+
+	const newBindPokeInfo = pokeInfo.myBind(Pika)
+	expect(new newBindPokeInfo()).toBeInstanceOf(pokeInfo)
 })
